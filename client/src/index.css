@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-clr-primary-one font-poppins text-clr-secondary-one;
+}
+
+.custom-input {
+  @apply bg-transparent border rounded-full w-full px-4 py-1;
+}
+
+.button-style {
+  @apply bg-clr-thertiary-one hover:bg-clr-tertiary-two px-2 py-1 rounded-full;
+}
+
+.custom-shadow {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+.nav-item {
+  @apply cursor-pointer relative flex justify-center items-center hover:text-clr-thertiary-one;
+}
+
+.nav-item-sub {
+  @apply absolute left-full flex items-center bg-clr-secondary-one rounded text-clr-primary-one text-xl ml-6 py-1 px-2 opacity-0;
+}
+
+.nav-item:hover .nav-item-sub {
+  @apply opacity-100;
+}
+
+.nav-item-sub-arrow {
+  @apply absolute left-0 bg-clr-secondary-one rounded w-4 h-4 -z-10 -ml-1 rotate-45;
+}
+
+.main-container {
+  @apply flex gap-8 h-screen ml-24 pr-4 py-4;
+}
+
+.sub-container-left {
+  @apply border rounded-3xl w-full p-4;
+}
+
+.sub-container-right {
+  @apply border rounded-3xl w-full max-w-sm p-4;
+}
