@@ -1,8 +1,15 @@
 import React from "react";
 import { GeneralState } from "../../context/GeneralContext";
+import { FaTrashAlt } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
-  const { setCurrentProduct } = GeneralState();
+  const {
+    deleteProduct,
+    setInventoryTab,
+    setCurrentProduct,
+    updateInventory,
+    setUpdateInventory,
+  } = GeneralState();
 
   let currency = Intl.NumberFormat("en-US", {
     style: "currency",
@@ -11,10 +18,25 @@ const ProductCard = ({ product }) => {
 
   const handleClick = () => {
     setCurrentProduct(product);
+    setInventoryTab("editProduct");
+  };
+
+  const handleDelete = () => {
+    deleteProduct(product.id);
+    setUpdateInventory(!updateInventory);
   };
 
   return (
-    <div onClick={handleClick} className="cursor-pointer border rounded-xl p-2">
+    <div
+      onClick={handleClick}
+      className="cursor-pointer relative border rounded-xl p-2"
+    >
+      <div
+        onClick={handleDelete}
+        className="cursor-pointer absolute right-0 top-0 bg-clr-primary-two rounded-full text-clr-primary-one hover:text-clr-thertiary-one z-10 p-2 translate-x-1/2 -translate-y-1/2"
+      >
+        <FaTrashAlt />
+      </div>
       <div className="rounded-lg overflow-hidden">
         <img src={product.img_url} alt={product.name} />
       </div>

@@ -26,7 +26,7 @@ body {
   @apply absolute left-full flex items-center bg-clr-secondary-one rounded text-clr-primary-one text-xl ml-6 py-1 px-2 opacity-0;
 }
 
-.nav-item:hover .nav-item-sub {
+.nav-item:hover > .nav-item-sub {
   @apply opacity-100;
 }
 
@@ -44,4 +44,30 @@ body {
 
 .sub-container-right {
   @apply border rounded-3xl w-full max-w-sm p-4;
+}
+
+.add-button {
+  @apply relative;
+}
+
+.add-button::after {
+  content: "Añadir";
+  @apply absolute left-1/2 bottom-full bg-clr-primary-two rounded text-clr-primary-one mb-1 p-1 -translate-x-1/2 opacity-0;
+}
+
+.add-button:hover::after {
+  @apply opacity-100;
+}
+
+.update-button {
+  @apply relative;
+}
+
+.update-button::after {
+  content: "Actualizar";
+  @apply absolute left-1/2 bottom-full bg-clr-primary-two rounded text-clr-primary-one mb-1 p-1 -translate-x-1/2 opacity-0;
+}
+
+.update-button:hover::after {
+  @apply opacity-100;
 }
