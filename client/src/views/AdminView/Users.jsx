@@ -5,13 +5,13 @@ import SignUpUser from "../../components/SignUpUser";
 import UserCard from "../../components/elements/UserCard";
 
 const Users = () => {
-  const { getUsers, users } = UserAuth();
+  const { getUsers, users, updateUsers } = UserAuth();
   const { setCurrentTab } = GeneralState();
 
   useEffect(() => {
     setCurrentTab("UsersAdmin");
     getUsers();
-  }, []);
+  }, [updateUsers]);
 
   return (
     <div className="main-container">

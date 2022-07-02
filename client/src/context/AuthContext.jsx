@@ -17,6 +17,8 @@ export const AuthContextProvider = ({ children }) => {
   const [users, setUsers] = useState(null);
   const [error, setError] = useState("");
 
+  const [updateUsers, setUpdateUsers] = useState(false);
+
   const navigate = useNavigate();
 
   const signUp = async (email, password, rol, firstName, lastName) => {
@@ -91,6 +93,8 @@ export const AuthContextProvider = ({ children }) => {
         setUsers,
         error,
         setError,
+        updateUsers,
+        setUpdateUsers,
       }}
     >
       {children}

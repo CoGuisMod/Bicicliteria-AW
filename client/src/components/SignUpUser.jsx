@@ -8,27 +8,52 @@ const errorMessageVariant = {
 };
 
 const SignUpUser = () => {
-  const { signUp, error, setError } = UserAuth();
+  const { signUp, error, setError, users, updateUsers, setUpdateUsers } =
+    UserAuth();
+  const [showError, setShowError] = useState(false);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [rol, setRol] = useState("seller");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [customError, setCustomError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      firstName === "" ||
+      lastName === "" ||
+      email === "" ||
+      password === "" ||
+      confirmPassword === ""
+    ) {
+      setError("Todos los campos son obligatorios");
+      return;
+    }
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Las contraseñas no coinciden");
       console.log(error);
+      return;
+    }
+    if (users.map((user) => user.email === email).includes(true)) {
+      setError("El correo ya existe");
       return;
     } else {
       setError("");
     }
     try {
       await signUp(email, password, rol, firstName, lastName);
+      setUpdateUsers(!updateUsers);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
     } catch (e) {
       setError(e.message);
       console.log(e.message, "error");
@@ -47,13 +72,15 @@ const SignUpUser = () => {
 
   return (
     <div className="flex flex-col justify-start items-center text-center h-full">
-      <motion.div
-        animate={customError ? "open" : "closed"}
-        variants={errorMessageVariant}
-        className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
-      >
-        {customError}
-      </motion.div>
+      {error ? (
+        <motion.div
+          animate={showError ? "open" : "closed"}
+          variants={errorMessageVariant}
+          className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
+        >
+          {error}
+        </motion.div>
+      ) : null}
       <h2 className="text-2xl">Crear Usuario</h2>
       <form
         onSubmit={handleSubmit}

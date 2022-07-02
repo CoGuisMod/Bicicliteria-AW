@@ -3,10 +3,11 @@ import { UserAuth } from "../../context/AuthContext";
 import { FaTrashAlt, FaUserAlt } from "react-icons/fa";
 
 const UserCard = ({ email, rol, firstName, lastName }) => {
-  const { deleteUser } = UserAuth();
+  const { deleteUser, updateUsers, setUpdateUsers } = UserAuth();
 
   const handleDelete = () => {
     deleteUser(email);
+    setUpdateUsers(!updateUsers);
   };
 
   return (
