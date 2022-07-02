@@ -1,12 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LogIn from "./views/LogIn";
 import Navbar from "./components/Navbar";
+import SellerHome from "./views/SellerView";
 import AdminHome from "./views/AdminView";
 import AdminInventory from "./views/AdminView/Inventory";
 import AdminSellsHistory from "./views/AdminView/SellsHistory";
 import AdminUsers from "./views/AdminView/Users";
 import { AuthContextProvider } from "./context/AuthContext";
 import { GeneralContextProvider } from "./context/GeneralContext";
+import Logged from "./components/ProtectedRoutes/Logged";
 
 function App() {
   return (
@@ -15,7 +17,15 @@ function App() {
         <GeneralContextProvider>
           <Navbar />
           <Routes>
-            <Route path="/" element={<LogIn />} />
+            <Route
+              path="/"
+              element={
+                <Logged>
+                  <LogIn />
+                </Logged>
+              }
+            />
+            <Route path="/seller" element={<SellerHome />} />
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/inventory" element={<AdminInventory />} />
             <Route

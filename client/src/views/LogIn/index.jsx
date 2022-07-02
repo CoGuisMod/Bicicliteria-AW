@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaUserAlt } from "react-icons/fa";
 
@@ -10,12 +9,11 @@ const errorMessageVariant = {
 };
 
 const index = () => {
+  const { logIn, error, setError } = UserAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [customError, setCustomError] = useState("");
-
-  const { logIn } = UserAuth();
+  const [showError, setShowError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,36 +21,36 @@ const index = () => {
     try {
       await logIn(email, password);
     } catch (e) {
-      setError(e.message);
-      console.log(e.message);
+      setError("El usuario no existe");
     }
   };
 
-  console.log(error);
-
   useEffect(() => {
-    if (error === "Firebase: Error (auth/user-not-found).") {
-      setCustomError("No se encuentra el usuario");
-    }
-    if (error === "Firebase: Error (auth/wrong-password).") {
-      setCustomError("Contraseña incorrecta");
+    if (error) {
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+        setError("");
+      }, 3000);
     }
   }, [error]);
 
   return (
     <section className="flex justify-center items-center h-screen">
-      <motion.div
-        animate={customError ? "open" : "closed"}
-        variants={errorMessageVariant}
-        className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
-      >
-        {customError}
-      </motion.div>
+      {error ? (
+        <motion.div
+          animate={showError ? "open" : "closed"}
+          variants={errorMessageVariant}
+          className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
+        >
+          {error}
+        </motion.div>
+      ) : null}
       <div className="border rounded-3xl p-8">
         <FaUserAlt className="text-7xl mx-auto" />
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col justify-center items-center gap-4 mt-8"
+          className="flex flex-col justify-center items-center gap-6 mt-8"
         >
           <input
             type="email"
@@ -66,7 +64,7 @@ const index = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="custom-input"
           />
-          <button className="button-style text-xl mt-8">Ingresar</button>
+          <button className="button-style text-xl mt-2">Ingresar</button>
         </form>
       </div>
     </section>

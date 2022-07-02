@@ -23,11 +23,11 @@ body {
 }
 
 .nav-item-sub {
-  @apply absolute left-full flex items-center bg-clr-secondary-one rounded text-clr-primary-one text-xl ml-6 py-1 px-2 opacity-0;
+  @apply absolute left-full items-center bg-clr-secondary-one rounded text-clr-primary-one text-xl ml-6 py-1 px-2 hidden;
 }
 
 .nav-item:hover > .nav-item-sub {
-  @apply opacity-100;
+  @apply flex;
 }
 
 .nav-item-sub-arrow {

@@ -8,16 +8,15 @@ const errorMessageVariant = {
 };
 
 const SignUpUser = () => {
+  const { signUp, error, setError } = UserAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [rol, setRol] = useState("seller");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [error, setError] = useState("");
   const [customError, setCustomError] = useState("");
-
-  const { signUp } = UserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,18 +31,17 @@ const SignUpUser = () => {
       await signUp(email, password, rol, firstName, lastName);
     } catch (e) {
       setError(e.message);
-      console.log(e.message);
+      console.log(e.message, "error");
     }
   };
 
-  console.log(error);
-
   useEffect(() => {
-    if (error === "Firebase: Error (auth/user-not-found).") {
-      setCustomError("No se encuentra el usuario");
-    }
-    if (error === "Firebase: Error (auth/wrong-password).") {
-      setCustomError("Contraseña incorrecta");
+    if (error) {
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+        setError("");
+      }, 3000);
     }
   }, [error]);
 

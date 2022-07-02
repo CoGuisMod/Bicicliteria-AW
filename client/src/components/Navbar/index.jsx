@@ -1,5 +1,7 @@
 import React from "react";
 import { UserAuth } from "../../context/AuthContext";
+import NavItemsSeller from "./NavItemsSeller";
+import NavItemsMechanic from "./NavItemsMechanic";
 import NavItemsAdmin from "./NavItemsAdmin";
 import { FaBicycle, FaSignOutAlt } from "react-icons/fa";
 
@@ -10,15 +12,18 @@ const index = () => {
     await logOut();
   };
 
-  return (
+  return user ? (
     <aside className="fixed text-4xl h-full z-10 p-4">
       <div className="flex flex-col items-center border rounded-3xl h-full p-2">
         <FaBicycle className=" text-clr-thertiary-one text-5xl" />
 
         {user?.rol === "admin" ? (
           <NavItemsAdmin />
-        ) : user?.rol === "seller" ? null : user?.rol ===
-          "mechanic" ? null : null}
+        ) : user?.rol === "seller" ? (
+          <NavItemsSeller />
+        ) : user?.rol === "mechanic" ? (
+          <NavItemsMechanic />
+        ) : null}
 
         <div className="mt-auto">
           <button onClick={handleSignOut} className="text-clr-thertiary-one">
@@ -27,7 +32,7 @@ const index = () => {
         </div>
       </div>
     </aside>
-  );
+  ) : null;
 };
 
 export default index;

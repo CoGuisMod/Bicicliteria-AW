@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { UserAuth } from "../../context/AuthContext";
 import { GeneralState } from "../../context/GeneralContext";
 import SignUpUser from "../../components/SignUpUser";
@@ -7,7 +7,6 @@ import UserCard from "../../components/elements/UserCard";
 const Users = () => {
   const { getUsers, users } = UserAuth();
   const { setCurrentTab } = GeneralState();
-  const [tab, setTab] = useState("signUpUser");
 
   useEffect(() => {
     setCurrentTab("UsersAdmin");
@@ -30,7 +29,7 @@ const Users = () => {
         </div>
       </div>
       <div className="sub-container-right">
-        {tab === "signUpUser" && <SignUpUser />}
+        <SignUpUser />
       </div>
     </div>
   );

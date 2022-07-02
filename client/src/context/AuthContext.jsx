@@ -15,6 +15,7 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState(null);
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -34,12 +35,18 @@ export const AuthContextProvider = ({ children }) => {
     const initialData = await getDoc(docuRef);
     const finalData = initialData.data();
     if (finalData.password !== password) {
-      console.log("Contraseña incorrecta");
+      setError("Contraseña incorrecta");
       return;
     }
     if (finalData.password === password) {
       setUser(finalData);
       window.localStorage.setItem("user", JSON.stringify(finalData));
+      if (finalData.rol === "seller") {
+        navigate("/seller");
+      }
+      if (finalData.rol === "mechanic") {
+        navigate("/mechanic");
+      }
       if (finalData.rol === "admin") {
         navigate("/admin");
       }
@@ -82,6 +89,8 @@ export const AuthContextProvider = ({ children }) => {
         getUsers,
         users,
         setUsers,
+        error,
+        setError,
       }}
     >
       {children}
