@@ -8,11 +8,8 @@ const UserAdmin = ({ children }) => {
   if (!user) {
     return <Navigate to="/" />;
   }
-  if (user?.rol === "seller") {
-    return <Navigate to="/seller" />;
-  }
-  if (user?.rol === "mechanic") {
-    return <Navigate to="/mechanic" />;
+  if (user?.rol !== "admin") {
+    return <Navigate to="/" />;
   }
 
   return children;

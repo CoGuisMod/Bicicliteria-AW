@@ -8,8 +8,8 @@ const UserMechanic = ({ children }) => {
   if (!user) {
     return <Navigate to="/" />;
   }
-  if (user?.rol === "seller") {
-    return <Navigate to="/seller" />;
+  if (user?.rol !== "mechanic") {
+    return <Navigate to="/" />;
   }
 
   return children;

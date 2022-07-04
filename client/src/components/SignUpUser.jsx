@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { UserAuth } from "../context/AuthContext";
-import { motion } from "framer-motion";
-
-const errorMessageVariant = {
-  open: { opacity: 1, y: 0 },
-  closed: { opacity: 0, y: "-100%" },
-};
+import { GeneralState } from "../context/GeneralContext";
+import MessageCard from "./elements/MessageCard";
 
 const SignUpUser = () => {
   const { signUp, error, setError, users, updateUsers, setUpdateUsers } =
     UserAuth();
-  const [showError, setShowError] = useState(false);
+
+  const { setMessage } = GeneralState();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -28,23 +25,23 @@ const SignUpUser = () => {
       password === "" ||
       confirmPassword === ""
     ) {
-      setError("Todos los campos son obligatorios");
+      setMessage("Todos los campos son obligatorios");
       return;
     }
     if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+      setMessage("La contraseña debe tener al menos 6 caracteres");
       return;
     }
     if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
+      setMessage("Las contraseñas no coinciden");
       console.log(error);
       return;
     }
     if (users.map((user) => user.email === email).includes(true)) {
-      setError("El correo ya existe");
+      setMessage("El correo ya existe");
       return;
     } else {
-      setError("");
+      setMessage("");
     }
     try {
       await signUp(email, password, rol, firstName, lastName);
@@ -55,32 +52,14 @@ const SignUpUser = () => {
       setPassword("");
       setConfirmPassword("");
     } catch (e) {
-      setError(e.message);
+      setMessage(e.message);
       console.log(e.message, "error");
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-        setError("");
-      }, 3000);
-    }
-  }, [error]);
-
   return (
     <div className="flex flex-col justify-start items-center text-center h-full">
-      {error ? (
-        <motion.div
-          animate={showError ? "open" : "closed"}
-          variants={errorMessageVariant}
-          className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
-        >
-          {error}
-        </motion.div>
-      ) : null}
+      <MessageCard />
       <h2 className="text-2xl">Crear Usuario</h2>
       <form
         onSubmit={handleSubmit}
