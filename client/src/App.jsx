@@ -9,6 +9,7 @@ import AdminUsers from "./views/AdminView/Users";
 import { AuthContextProvider } from "./context/AuthContext";
 import { GeneralContextProvider } from "./context/GeneralContext";
 import Logged from "./components/ProtectedRoutes/Logged";
+import History from "./views/SellerView/History";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               }
             />
             <Route path="/seller" element={<SellerHome />} />
+            <Route path="/seller/history" element={<History />} />
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/inventory" element={<AdminInventory />} />
             <Route

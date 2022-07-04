@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GeneralState } from "../context/GeneralContext";
 import { firebaseStorage } from "../firebase/config";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { motion } from "framer-motion";
 import { FaUpload } from "react-icons/fa";
+
+const errorMessageVariant = {
+  open: { opacity: 1, y: 0 },
+  closed: { opacity: 0, y: "-100%" },
+};
 
 const AddProduct = () => {
   const { addProduct, updateInventory, setUpdateInventory } = GeneralState();
@@ -14,6 +20,9 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
+
+  const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
 
   const uploadImage = () => {
     const storageRef = ref(firebaseStorage, `/${image.name}`);
@@ -39,12 +48,56 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await addProduct(imgUrl, name, color, price, stock, category);
-    setUpdateInventory(!updateInventory);
+    if (
+      image === "" ||
+      name === "" ||
+      color === "" ||
+      price === "" ||
+      stock === "" ||
+      category === ""
+    ) {
+      setError("Todos los campos son obligatorios");
+      return;
+    }
+    if (image !== "" && imgUrl === "") {
+      setError("Primero debe subir la imagen");
+      return;
+    }
+    if (stock < 0) {
+      setError("El stock no puede ser menor a 0");
+      return;
+    }
+    if (price < 0) {
+      setError("El precio no puede ser menor a 0");
+      return;
+    }
+    if (imgUrl !== "") {
+      await addProduct(imgUrl, name, color, price, stock, category);
+      setUpdateInventory(!updateInventory);
+    }
   };
+
+  useEffect(() => {
+    if (error) {
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+        setError("");
+      }, 3000);
+    }
+  }, [error]);
 
   return (
     <div className="flex flex-col justify-start items-center text-center h-full">
+      {error ? (
+        <motion.div
+          animate={showError ? "open" : "closed"}
+          variants={errorMessageVariant}
+          className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
+        >
+          {error}
+        </motion.div>
+      ) : null}
       <h2 className="text-2xl">Añadir Producto</h2>
       <form
         onSubmit={handleSubmit}
@@ -95,6 +148,7 @@ const AddProduct = () => {
             }}
             className="bg-clr-primary-one text-lg"
           >
+            <option value="">Categoría</option>
             <option value="Bicicleta">Bicicleta</option>
             <option value="Casco">Casco</option>
             <option value="Gafas">Gafas</option>
