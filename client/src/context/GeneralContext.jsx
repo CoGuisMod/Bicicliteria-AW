@@ -23,8 +23,6 @@ export const GeneralContextProvider = ({ children }) => {
   const [checkProduct, setCheckProduct] = useState([]);
   const [productList, setProductList] = useState([]);
 
-  const [message, setMessage] = useState("");
-
   const [updateInventory, setUpdateInventory] = useState(false);
 
   const addProduct = async (imgUrl, name, color, price, stock, category) => {
@@ -92,8 +90,6 @@ export const GeneralContextProvider = ({ children }) => {
         setProductList,
         checkProduct,
         setCheckProduct,
-        message,
-        setMessage,
       }}
     >
       {children}

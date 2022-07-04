@@ -46,8 +46,6 @@ const ProductCard = ({ product }) => {
     setUpdateInventory(!updateInventory);
   };
 
-  console.log(addProduct, product.name);
-
   return (
     <div
       onClick={user.rol === "admin" ? handleClickAdmin : null}

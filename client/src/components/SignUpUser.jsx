@@ -1,59 +1,44 @@
 import React, { useState } from "react";
 import { UserAuth } from "../context/AuthContext";
-import { GeneralState } from "../context/GeneralContext";
+import AddUserValidation from "../utils/validations/AddUserValidation";
 import MessageCard from "./elements/MessageCard";
 
 const SignUpUser = () => {
-  const { signUp, error, setError, users, updateUsers, setUpdateUsers } =
-    UserAuth();
+  const { signUp, users, updateUsers, setUpdateUsers, setMessage } = UserAuth();
 
-  const { setMessage } = GeneralState();
-
+  /* User Data Open */
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [rol, setRol] = useState("seller");
+  const [rol, setRol] = useState("");
+  /* User Data Close */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      firstName === "" ||
-      lastName === "" ||
-      email === "" ||
-      password === "" ||
-      confirmPassword === ""
-    ) {
-      setMessage("Todos los campos son obligatorios");
-      return;
-    }
-    if (password.length < 6) {
-      setMessage("La contraseña debe tener al menos 6 caracteres");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setMessage("Las contraseñas no coinciden");
-      console.log(error);
-      return;
-    }
-    if (users.map((user) => user.email === email).includes(true)) {
-      setMessage("El correo ya existe");
-      return;
-    } else {
-      setMessage("");
-    }
-    try {
+    const validation = AddUserValidation(
+      users,
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      rol
+    );
+    if (validation.length === 0) {
       await signUp(email, password, rol, firstName, lastName);
+      setMessage("Usuario registrado correctamente");
       setUpdateUsers(!updateUsers);
       setFirstName("");
       setLastName("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-    } catch (e) {
-      setMessage(e.message);
-      console.log(e.message, "error");
+      setRol("");
+    }
+    if (validation.length > 0) {
+      setMessage(validation);
     }
   };
 
@@ -69,12 +54,14 @@ const SignUpUser = () => {
           <input
             type="text"
             placeholder="Nombre"
+            value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             className="text-lg custom-input"
           />
           <input
             type="text"
             placeholder="Apellido"
+            value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className="text-lg custom-input"
           />
@@ -82,27 +69,32 @@ const SignUpUser = () => {
         <input
           type="email"
           placeholder="Correo"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="text-lg custom-input"
         />
         <input
           type="password"
           placeholder="Contraseña"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="text-lg custom-input"
         />
         <input
           type="password"
           placeholder="Confirmar Contraseña"
+          value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           className="text-lg custom-input"
         />
         <select
+          value={rol}
           onChange={(e) => {
             setRol(e.target.value);
           }}
           className="self-start bg-clr-primary-one text-lg"
         >
+          <option value="">Seleccione un rol</option>
           <option value="seller">Vendedor</option>
           <option value="mechanic">Mecanico</option>
           <option value="admin">Administrador</option>

@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { UserAuth } from "../context/AuthContext";
 import { GeneralState } from "../context/GeneralContext";
 import { firebaseStorage } from "../firebase/config";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { motion } from "framer-motion";
+import AddProductValidation from "../utils/validations/AddProductValidation";
+import MessageCard from "./elements/MessageCard";
 import { FaUpload } from "react-icons/fa";
 
-const errorMessageVariant = {
-  open: { opacity: 1, y: 0 },
-  closed: { opacity: 0, y: "-100%" },
-};
-
 const AddProduct = () => {
+  const { setMessage } = UserAuth();
   const { addProduct, updateInventory, setUpdateInventory } = GeneralState();
 
+  /* Product Data Open */
   const [imgUrl, setImgUrl] = useState("");
   const [image, setImage] = useState("");
   const [name, setName] = useState("");
@@ -20,9 +19,7 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
-
-  const [error, setError] = useState("");
-  const [showError, setShowError] = useState(false);
+  /* Product Data Close */
 
   const uploadImage = () => {
     const storageRef = ref(firebaseStorage, `/${image.name}`);
@@ -34,6 +31,9 @@ const AddProduct = () => {
         const progress = Math.round(
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         );
+        if (progress === 100) {
+          setMessage("Imagen subida correctamente");
+        }
       },
       (error) => {
         alert(error);
@@ -48,56 +48,35 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      image === "" ||
-      name === "" ||
-      color === "" ||
-      price === "" ||
-      stock === "" ||
-      category === ""
-    ) {
-      setError("Todos los campos son obligatorios");
-      return;
-    }
-    if (image !== "" && imgUrl === "") {
-      setError("Primero debe subir la imagen");
-      return;
-    }
-    if (stock < 0) {
-      setError("El stock no puede ser menor a 0");
-      return;
-    }
-    if (price < 0) {
-      setError("El precio no puede ser menor a 0");
-      return;
-    }
-    if (imgUrl !== "") {
+    const validation = AddProductValidation(
+      image,
+      imgUrl,
+      name,
+      color,
+      price,
+      stock,
+      category
+    );
+    if (validation.length === 0) {
       await addProduct(imgUrl, name, color, price, stock, category);
       setUpdateInventory(!updateInventory);
+      setMessage("Producto agregado correctamente");
+      setImage("");
+      setImgUrl("");
+      setName("");
+      setColor("");
+      setPrice("");
+      setStock("");
+      setCategory("");
+    }
+    if (validation.length > 0) {
+      setMessage(validation);
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-        setError("");
-      }, 3000);
-    }
-  }, [error]);
-
   return (
     <div className="flex flex-col justify-start items-center text-center h-full">
-      {error ? (
-        <motion.div
-          animate={showError ? "open" : "closed"}
-          variants={errorMessageVariant}
-          className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
-        >
-          {error}
-        </motion.div>
-      ) : null}
+      <MessageCard />
       <h2 className="text-2xl">Añadir Producto</h2>
       <form
         onSubmit={handleSubmit}
@@ -105,31 +84,32 @@ const AddProduct = () => {
       >
         <div className="relative flex justify-center items-center border rounded-3xl w-full h-32">
           <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-          <button
+          <div
+            defaultValue={image}
             onClick={uploadImage}
-            className="absolute right-2 bottom-2 bg-clr-primary-two rounded-full text-clr-primary-one p-2"
+            className="cursor-pointer absolute right-2 bottom-2 bg-clr-primary-two rounded-full text-clr-primary-one p-2"
           >
             <FaUpload className="text-xl" />
-          </button>
+          </div>
         </div>
         <input
           type="text"
           placeholder="Producto"
-          defaultValue={name}
+          value={name}
           onChange={(e) => setName(e.target.value)}
           className="text-lg custom-input"
         />
         <input
           type="text"
           placeholder="Color"
-          defaultValue={color}
+          value={color}
           onChange={(e) => setColor(e.target.value)}
           className="text-lg custom-input"
         />
         <input
           type="text"
           placeholder="Precio"
-          defaultValue={price}
+          value={price}
           onChange={(e) => setPrice(e.target.value)}
           className="text-lg custom-input"
         />
@@ -137,12 +117,12 @@ const AddProduct = () => {
           <input
             type="number"
             placeholder="Cantidad"
-            defaultValue={stock}
+            value={stock}
             onChange={(e) => setStock(e.target.value)}
             className="text-lg custom-input"
           />
           <select
-            defaultValue={category}
+            value={category}
             onChange={(e) => {
               setCategory(e.target.value);
             }}

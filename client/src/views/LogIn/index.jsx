@@ -1,56 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { UserAuth } from "../../context/AuthContext";
-import { motion } from "framer-motion";
+import MessageCard from "../../components/elements/MessageCard";
 import { FaUserAlt } from "react-icons/fa";
 
-const errorMessageVariant = {
-  open: { opacity: 1, y: 0 },
-  closed: { opacity: 0, y: "-100%" },
-};
-
 const index = () => {
-  const { logIn, error, setError } = UserAuth();
+  const { logIn, setMessage } = UserAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showError, setShowError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setMessage("");
     try {
       await logIn(email, password);
     } catch (e) {
-      setError("El usuario no existe");
+      console.log(e.message, "Log In Error");
+      setMessage("El usuario no existe");
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-        setError("");
-      }, 3000);
-    }
-  }, [error]);
-
   return (
     <section className="flex justify-center items-center h-screen">
-      {error ? (
-        <motion.div
-          animate={showError ? "open" : "closed"}
-          variants={errorMessageVariant}
-          className="absolute top-4 bg-black rounded-xl px-4 py-3 -translate-x-1/2 custom-shadow"
-        >
-          {error}
-        </motion.div>
-      ) : null}
+      <MessageCard />
       <div className="border rounded-3xl p-8">
         <FaUserAlt className="text-7xl mx-auto" />
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col justify-center items-center gap-6 mt-8"
+          className="flex flex-col justify-center items-center gap-4 mt-8"
         >
           <input
             type="email"

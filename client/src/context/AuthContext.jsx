@@ -15,7 +15,7 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState(null);
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const [updateUsers, setUpdateUsers] = useState(false);
 
@@ -37,7 +37,7 @@ export const AuthContextProvider = ({ children }) => {
     const initialData = await getDoc(docuRef);
     const finalData = initialData.data();
     if (finalData.password !== password) {
-      setError("Contraseña incorrecta");
+      setMessage("Contraseña incorrecta");
       return;
     }
     if (finalData.password === password) {
@@ -91,8 +91,8 @@ export const AuthContextProvider = ({ children }) => {
         getUsers,
         users,
         setUsers,
-        error,
-        setError,
+        message,
+        setMessage,
         updateUsers,
         setUpdateUsers,
       }}

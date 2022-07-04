@@ -1,20 +1,39 @@
 import React, { useEffect, useState } from "react";
+import { UserAuth } from "../context/AuthContext";
 import { GeneralState } from "../context/GeneralContext";
+import EditProductValidation from "../utils/validations/EditProductValidation";
+import MessageCard from "./elements/MessageCard";
 
 const EditProduct = () => {
+  const { setMessage } = UserAuth();
   const { currentProduct, editProduct, updateInventory, setUpdateInventory } =
     GeneralState();
 
+  /* Product Data Open */
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
+  /* Product Data Close */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    editProduct(currentProduct.id, name, color, price, stock, category);
-    setUpdateInventory(!updateInventory);
+    const validation = EditProductValidation(
+      name,
+      color,
+      price,
+      stock,
+      category
+    );
+    if (validation.length === 0) {
+      await editProduct(currentProduct.id, name, color, price, stock, category);
+      setUpdateInventory(!updateInventory);
+      setMessage("Producto editado correctamente");
+    }
+    if (validation.length > 0) {
+      setMessage(validation);
+    }
   };
 
   useEffect(() => {
@@ -27,6 +46,7 @@ const EditProduct = () => {
 
   return (
     <div className="flex flex-col justify-start items-center text-center h-full">
+      <MessageCard />
       <h2 className="text-2xl">Editar Producto</h2>
       <form
         onSubmit={handleSubmit}
